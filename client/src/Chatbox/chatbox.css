@@ -1,12 +1,9 @@
 #chatbox {
-    grid-area: chat;
-    position: relative;
-    padding: 10px;
-    /*display: grid;
-    grid-template-rows: 4fr 1fr;
-    grid-area: "";*/
-  }
-  
+  grid-area: chat;
+  position: relative;
+  padding: 10px;
+}
+
 #chatbox form {
   position: absolute;
   left: 10px;
@@ -18,7 +15,7 @@
 
 #chat_input {
   flex: 0 0 90%;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 1.5rem;
   resize: none;
 }

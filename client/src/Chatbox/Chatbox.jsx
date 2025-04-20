@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 
-import "./chatbox.css"
+import "./Chatbox.css";
 const libraries = ["places"];
 
 function Input() {
@@ -77,8 +77,8 @@ function Input() {
           value={search}
           onChange={updateSearch}
         ></textarea>
-        
-        <input type="submit" value="Submit" id="submit"/>
+
+        <input type="submit" value="Submit" id="submit" />
       </form>
     </div>
   );
