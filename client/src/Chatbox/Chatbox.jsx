@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+
+import "./chatbox.css"
 const libraries = ["places"];
 
 function Input() {
@@ -55,7 +57,7 @@ function Input() {
   /* if (!isLoaded) return <p>Loading...</p>;*/
 
   return (
-    <div id="chat">
+    <div id="chatbox">
       <form onSubmit={findSuggestions}>
         {/*}  <label htmlFor="location">Location </label>
        {isLoaded ?  <Autocomplete onLoad={autocomplete => (window.autocomplete = autocomplete)}  onPlaceChanged={() => onPlaceChanged(window.autocomplete)}
@@ -66,16 +68,17 @@ function Input() {
             <input type="text" id="location" name="location" placeholder="Type in your city..."></input>
         </Autocomplete>  : "Loading....."}*/}
 
-        <label htmlFor="venue">Enter Text: </label>
-        <input
+        <label htmlFor="chat_input"></label>
+        <textarea
           type="text"
-          id="query_input"
-          name="query"
+          id="chat_input"
+          name="chat_input"
           placeholder="Enter your search..."
           value={search}
           onChange={updateSearch}
-        ></input>
-        <input type="submit" value="Submit" />
+        ></textarea>
+        
+        <input type="submit" value="Submit" id="submit"/>
       </form>
     </div>
   );

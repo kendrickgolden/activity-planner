@@ -1,4 +1,4 @@
-import Input from "./Input";
+import Input from "./Chatbox/Chatbox";
 
 import "./App.css";
 

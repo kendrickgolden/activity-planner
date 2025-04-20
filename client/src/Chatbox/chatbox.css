@@ -1,0 +1,28 @@
+#chatbox {
+    grid-area: chat;
+    position: relative;
+    padding: 10px;
+    /*display: grid;
+    grid-template-rows: 4fr 1fr;
+    grid-area: "";*/
+  }
+  
+#chatbox form {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  height: 100px;
+  display: flex;
+}
+
+#chat_input {
+  flex: 0 0 90%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  resize: none;
+}
+
+#submit {
+  flex: 0 0 10%;
+}
