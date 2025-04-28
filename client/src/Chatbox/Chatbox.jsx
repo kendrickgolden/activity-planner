@@ -4,9 +4,8 @@ import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import "./Chatbox.css";
 const libraries = ["places"];
 
-function Input() {
+function Input({suggestions, setSuggestions}) {
   /*const [city,setCity] = useState('');*/
-  const [suggestions, setSuggestions] = useState([]);
   const [search, setSearch] = useState("");
 
   const updateSearch = (event) => {
@@ -22,8 +21,8 @@ function Input() {
     const data = await response.json();
 
     if (data) {
-      setSuggestions(data);
-      console.log(data);
+      setSuggestions(data.results);
+      console.log(data.results);
     }
   };
 
