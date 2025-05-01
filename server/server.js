@@ -15,14 +15,9 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+//return list of venues
 app.get("/api/places", async (req, res) => {
   const query = req.query.query;
-
-  /*try {
-    
-  } catch {
-
-  }*/
 
   try {
     //make call to OpenAi to rewrite user search
@@ -46,7 +41,23 @@ app.get("/api/places", async (req, res) => {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Failed" });
   }
-  /* res.send("Server is ready234");*/
+});
+
+//return selected venue images
+app.get("/api/venue_images", async (req, res) => {
+  const query = req.query.query;
+
+  const imageRequest = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=4000&photo_reference=${query}&key=${process.env.PLACES_API_KEY}`;
+
+  try {
+    const response = await fetch(imageRequest);
+    const data = await response.arrayBuffer();
+    res.set("Content-Type", "image/jpeg");
+    res.send(Buffer.from(data));
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Failed to get image" });
+  }
 });
 
 app.listen(5000, () => {
