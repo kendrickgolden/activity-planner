@@ -6,14 +6,15 @@ import "./App.css";
 
 function App() {
     const [suggestions, setSuggestions] = useState([]);
+    const [numVenues, setNumVenues] = useState(0);
   
   return (
     <>
       <header>
         <h1>Activity Planner Chatbot</h1>
       </header>
-      <Chatbox suggestions={suggestions} setSuggestions={setSuggestions}/>
-      <Recs suggestions={suggestions}/>
+      <Chatbox suggestions={suggestions} setSuggestions={setSuggestions} setNumVenues={setNumVenues}/>
+      <Recs suggestions={suggestions} numVenues={numVenues}/>
     </>
   );
 }

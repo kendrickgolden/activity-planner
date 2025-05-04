@@ -23,22 +23,29 @@ app.get("/api/places", async (req, res) => {
 
   try {
     //make call to OpenAi to rewrite user search
-    const openAIPrompt = `Reword this into a phrase that would retain relevant results as a Google Maps API textsearch query: "${query}"`;
+    const openAIPrompt = `Reword this into a phrase that would retain relevant results as a Google Maps API textsearch query: "${query}". If the user is looking for multiple different venues return each respective phrase serpated by the delimiter "|". Be careful not to overestimate the number of different venues the user is looking for.`;
     const openAIResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: openAIPrompt }],
       max_tokens: 30,
     });
-    const newQuery = openAIResponse.choices[0].message.content.trim();
-    /*console.log("New Query: " + newQuery);*/
-    //send new query to Places API
-    const placesURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
-      query
-    )}&key=${process.env.PLACES_API_KEY}`;
+    const queries = openAIResponse.choices[0].message.content.trim().split("|");
+    console.log("New Query: " + queries);
 
-    const response = await fetch(placesURL);
-    const data = await response.json();
-    res.json(data);
+    const output = [];
+    //send new query to Places API
+    for (const query of queries) {
+      const placesURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
+        query
+      )}&key=${process.env.PLACES_API_KEY}`;
+
+      const response = await fetch(placesURL);
+      const data = await response.json();
+      output.push(data)
+    }
+    console.log("Output: ", output)
+    res.json(output);
+  // res.json(data)
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Failed" });
@@ -65,8 +72,9 @@ app.get("/api/venue_images", async (req, res) => {
 //generate description for venues
 app.post("/api/generate_desc", async (req, res) => {
   const { query } = req.body;
-  console.log("QUERY is" + JSON.stringify(query));
+  // console.log("QUERY is" + JSON.stringify(query));
   try {
+    //Extra descriptiors added to help GPT generate more usefull solutions.
     const openAIPrompt = `Use this data to generate a description of the venue "${JSON.stringify(
       query
     )}. Try to keep the description to within 2 sentences. Don't include  the exact address, ratings, reviews, or price level. Aspects to focus on: unique features, general part of the city, type of vibe(relaxed, upscale, authentic). If necessary, search the web for this venure and generate description based on what is found. Try not to use generic terms that could be used to describe large quanitites of places."`;
@@ -76,7 +84,7 @@ app.post("/api/generate_desc", async (req, res) => {
       max_tokens: 100,
     });
     const data = openAIResponse.choices[0].message.content.trim();
-    console.log("Description: " + data);
+    // console.log("Description: " + data);
     res.json(data);
   } catch (error) {
     console.error("Error:", error.message);

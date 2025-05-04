@@ -6,6 +6,22 @@ function Recs({ suggestions }) {
   const [images, setImages] = useState([]);
   const [descriptions, setDescriptions] = useState([]);
 
+  const venueCards = suggestions.map((venue) => (
+    <div>
+      <div className="rec_card">
+        {/*} <h3 className="datetime">Date: --- Time:</h3>*/}
+        <div className="venue">
+          <img src={images} alt="Venue" />
+          <div className="details">
+            <h4 className="name">{venue.results[0].name}</h4>
+            <div className="stars">Rating: {venue.results[0].rating}</div>
+            <div className="desc">{descriptions}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ));
+
   useEffect(() => {
     const getImages = async () => {
       try {
@@ -15,8 +31,8 @@ function Recs({ suggestions }) {
         const data = await response.blob();
         const imageURL = URL.createObjectURL(data);
         setImages(imageURL);
-        console.log("Images: ", data);
-        console.log("TESTING");
+        //     console.log("Images: ", data);
+        //    console.log("TESTING");
       } catch (error) {
         console.error("Image fetch failed: ", error);
       }
@@ -31,10 +47,10 @@ function Recs({ suggestions }) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ query: suggestions[0]}),
+            body: JSON.stringify({ query: suggestions[0] }),
           }
         );
-        console.log(JSON.stringify({ query: suggestions[0]}));
+        console.log(JSON.stringify({ query: suggestions[0] }));
         const data = await response.json();
         setDescriptions(data);
         console.log("Description: ", data);
@@ -45,25 +61,18 @@ function Recs({ suggestions }) {
 
     if (suggestions.length > 0) {
       getImages();
-      console.log(JSON.stringify({ query: suggestions[0]}))
+      //   console.log(JSON.stringify({ query: suggestions[0]}))
       generateDesc();
     }
   }, [suggestions]);
 
   return (
     <div id="recs">
-      <h2>Recomendations:</h2>
+      {" "}
       {suggestions && suggestions.length > 0 ? (
-        <div className="rec_card">
-          {/*} <h3 className="datetime">Date: --- Time:</h3>*/}
-          <div className="venue">
-            <img src={images} alt="Venue" />
-            <div className="details">
-              <h4 className="name">{suggestions[0].name}</h4>
-              <div className="stars">Rating: {suggestions[0].rating}</div>
-              <div className="desc">{descriptions}</div>
-            </div>
-          </div>
+        <div>
+          <h2>Recomendations:</h2>
+          {venueCards}
         </div>
       ) : (
         <div>Enter a query to receive suggestions</div>
