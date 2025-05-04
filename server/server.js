@@ -11,6 +11,8 @@ const openai = new OpenAI({
 });
 
 app.use(cors());
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -28,7 +30,7 @@ app.get("/api/places", async (req, res) => {
       max_tokens: 30,
     });
     const newQuery = openAIResponse.choices[0].message.content.trim();
-    console.log("New Query: " + newQuery);
+    /*console.log("New Query: " + newQuery);*/
     //send new query to Places API
     const placesURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
       query
@@ -60,6 +62,27 @@ app.get("/api/venue_images", async (req, res) => {
   }
 });
 
+//generate description for venues
+app.post("/api/generate_desc", async (req, res) => {
+  const { query } = req.body;
+  console.log("QUERY is" + JSON.stringify(query));
+  try {
+    const openAIPrompt = `Use this data to generate a description of the venue "${JSON.stringify(
+      query
+    )}. Try to keep the description to within 2 sentences. Don't include  the exact address, ratings, reviews, or price level. Aspects to focus on: unique features, general part of the city, type of vibe(relaxed, upscale, authentic). If necessary, search the web for this venure and generate description based on what is found. Try not to use generic terms that could be used to describe large quanitites of places."`;
+    const openAIResponse = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: openAIPrompt }],
+      max_tokens: 100,
+    });
+    const data = openAIResponse.choices[0].message.content.trim();
+    console.log("Description: " + data);
+    res.json(data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Failed" });
+  }
+});
 app.listen(5000, () => {
   console.log("Server started at  http://localhost:5000");
 });

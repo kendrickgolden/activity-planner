@@ -4,6 +4,7 @@ import "./Recs.css";
 function Recs({ suggestions }) {
   /*const [numSuggestions, setNumSuggestions] = useState(0);*/
   const [images, setImages] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
 
   useEffect(() => {
     const getImages = async () => {
@@ -21,8 +22,31 @@ function Recs({ suggestions }) {
       }
     };
 
+    const generateDesc = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/generate_desc`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ query: suggestions[0]}),
+          }
+        );
+        console.log(JSON.stringify({ query: suggestions[0]}));
+        const data = await response.json();
+        setDescriptions(data);
+        console.log("Description: ", data);
+      } catch (error) {
+        console.error("Description fetch failed: ", error);
+      }
+    };
+
     if (suggestions.length > 0) {
       getImages();
+      console.log(JSON.stringify({ query: suggestions[0]}))
+      generateDesc();
     }
   }, [suggestions]);
 
@@ -37,7 +61,7 @@ function Recs({ suggestions }) {
             <div className="details">
               <h4 className="name">{suggestions[0].name}</h4>
               <div className="stars">Rating: {suggestions[0].rating}</div>
-              <div className="desc">Desc</div>
+              <div className="desc">{descriptions}</div>
             </div>
           </div>
         </div>
