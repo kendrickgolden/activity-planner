@@ -20,8 +20,8 @@ app.get("/", (req, res) => {
 //return list of venues
 app.get("/api/get_venues", async (req, res) => {
   const queries = req.query.query;
-  const newQueries = queries.split("|").map(q => q.trim());
-  console.log(newQueries)
+  const newQueries = queries.split("|").map((q) => q.trim());
+  console.log(newQueries);
   const output = [];
 
   try {
@@ -44,31 +44,25 @@ app.get("/api/get_venues", async (req, res) => {
 });
 
 //determine if there is enough information to create a proper query or ask for more info if necessary
-app.get("/api/generate_query", async (req, res) => {
-  const query = req.query.query;
-
+app.post("/api/generate_query", async (req, res) => {
+  const messages = req.body.messages;
+  console.log(messages, "MEssages");
   try {
-    //make call to OpenAi to rewrite user search
-    const openAIPrompt = `You are an assistant that will reword user quieres for the Google Maps Places API
-    Step 1: Analyze what the user is looking for from : "${query}". 
-      First, determine the number of different venues the user is looking to attend.
-      Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query.
-      Make sure you understand what the user is looking for, and some key details, such as the type of food. Do not hesitate to ask questions.
-    Step 2: If the query is understood, return:
-       Rewritten query or queries seperated by the delimiter: "|". Make sure that every venue has its own query. Example Format: query1|query2|query3
-    Step 3: If the query is ambiguous or missing information, return:
-      QUESTION: [clarifying question here]
-    Don't return "step 1,2,3", only return clear or question and the respetive text`;
-
+    //make call to OpenAI to rewrite user search
     const openAIResponse = await openai.chat.completions.create({
       model: "gpt-4-turbo",
-      messages: [{ role: "user", content: openAIPrompt }],
-      max_tokens: 100,
+      messages: messages,
+      max_tokens: 200,
     });
-    const output = openAIResponse.choices[0].message.content.trim().split("|");
-    console.log("Output: " + output);
+    const response = openAIResponse.choices[0].message.content.trim();
+    console.log("Response: " + response);
 
-    res.json(output);
+    if (response.startsWith("QUESTION:")) {
+      return res.json({ response });
+    }
+
+    const output = response.split("|").map((que) => que.trim());
+    res.json({response, output});
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Failed" });

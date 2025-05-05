@@ -6,6 +6,7 @@ const libraries = ["places"];
 
 function Input({ suggestions, setSuggestions, setNumVenues }) {
   const [search, setSearch] = useState("");
+
   //store user and GPT responses as list
   const [convo, setConvo] = useState([]);
 
@@ -15,45 +16,74 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
     setSearch(event.target.value);
   };
 
+  //starting prompt for GPT
+  const initialPrompt = {
+    role: "system",
+    content: `You are an assistant that will reword user quieres for the Google Maps Places API
+    Step 1: Analyze what the user is looking for. 
+      First, determine the number of different venues the user is looking to attend.
+      Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query.
+      Make sure you understand what the user is looking for, and some key details, such as the type of food. Do not hesitate to ask questions.
+    Step 2: If the query is understood, return:
+       Rewritten query or queries seperated by the delimiter: "|". Make sure that every venue has its own query. Example Format: query1|query2|query3
+    Step 3: If the query is ambiguous or missing information, return:
+      QUESTION: [clarifying question here]
+    Don't return "step 1,2,3", only return clear or question and the respetive text`,
+  };
+
   //send query to Open AI for conversion and return places query results
   const processSearch = async (event) => {
     event.preventDefault();
-    const new_messages = [];
-    //0 = user text, 1 = response text
-    new_messages.push([search, 0]);
 
+    const userMessage = { role: "user", content: search };
+    const updatedConvo =
+      convo.length === 0
+        ? [initialPrompt, userMessage]
+        : [...convo, userMessage];
+    // console.log(updatedConvo);
     setSearch("");
 
-    const response = await fetch(
-      `http://localhost:5000/api/generate_query?query=${search}`
-    );
+    //send as POST to utlilize convo history
+    const response = await fetch(`http://localhost:5000/api/generate_query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: updatedConvo }),
+    });
 
     const data = await response.json();
-    console.log(data);
-    if (data[0].includes("QUESTION:")) {
-      new_messages.push([data[0], 1]);
-      console.log("question");
+    console.log("DATA:", data);
+
+    //add GPT response to conversation hitsory
+    const AIMessage = data.response.startsWith("QUESTION:")
+      ? { role: "assistant", content: data.response }
+      : { role: "assistant", content: "Ok, here you go!" };
+    const updatedConvoResponse = [...updatedConvo, AIMessage];
+    setConvo(updatedConvoResponse);
+
+    if (data.response.startsWith("QUESTION:")) {
+      return;
     } else {
       getSuggestions(data);
     }
-    setConvo((prevText) => [...prevText, ...new_messages]);
-    console.log("new msgs", new_messages);
   };
 
   //send queries to Google Place API
   const getSuggestions = async (queries) => {
-    const queryString = encodeURIComponent(queries.join("|"));
-    console.log(queryString);
-    const response = await fetch(
-      `http://localhost:5000/api/get_venues?query=${queryString}`
-    );
-
-    const data = await response.json(); 
-    console.log(data);
-    
-    
-    setSuggestions(Object.values(data));
-    setNumVenues(data.length);
+    const queryArray = queries.output;
+    // console.log("QUERIES:", queries.output);
+    const queryString = encodeURIComponent(queryArray.join("|"));
+    console.log("Q STRING", queryString);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/get_venues?query=${queryString}`
+      );
+      const data = await response.json();
+      console.log(data);
+      setSuggestions(Object.values(data));
+      setNumVenues(data.length);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
   };
 
   return (
