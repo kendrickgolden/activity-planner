@@ -24,11 +24,14 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
       First, determine the number of different venues the user is looking to attend.
       Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query.
       Make sure you understand what the user is looking for, and some key details, such as the type of food. Do not hesitate to ask questions.
-    Step 2: If the query is understood, return:
+      Ensure the venue has at least 5 reviews.
+    Step 2: If a specific time or time range is given (for example "between 6pm and 9pm"), note it. Rewrite the query or queries to filter venues open during those times. 
+    If no time is given, do not add any time filter.
+    Step 3: If the query is understood, return:
        Rewritten query or queries seperated by the delimiter: "|". Make sure that every venue has its own query. Example Format: query1|query2|query3
-    Step 3: If the query is ambiguous or missing information, return:
+    Step 4: If the query is ambiguous or missing information, return:
       QUESTION: [clarifying question here]
-    Don't return "step 1,2,3", only return clear or question and the respetive text`,
+    Don't return "step 1,2,3", only return clear or question and the respective text`,
   };
 
   //send query to Open AI for conversion and return places query results
@@ -72,7 +75,7 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
     const queryArray = queries.output;
     // console.log("QUERIES:", queries.output);
     const queryString = encodeURIComponent(queryArray.join("|"));
-    console.log("Q STRING", queryString);
+    //console.log("Q STRING", queryString);
     try {
       const response = await fetch(
         `http://localhost:5000/api/get_venues?query=${queryString}`

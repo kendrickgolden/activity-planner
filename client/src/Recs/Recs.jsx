@@ -7,11 +7,24 @@ function Recs({ suggestions }) {
   const [images, setImages] = useState({});
   const [descriptions, setDescriptions] = useState([]);
 
+  //Display venue rating as stars
+  const displayStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating - fullStars >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    return (
+      <>
+        {"★".repeat(fullStars)}
+        {halfStar && "½"}
+        {"☆".repeat(emptyStars)}
+      </>
+    );
+  };
   const venueCards = suggestions.map((suggestion) => {
     const id = suggestion.results[0].place_id;
     const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${id}`;
     return (
-      <a key={id}  href={mapsUrl} target="_blank" className="maps_link">
+      <a key={id} href={mapsUrl} target="_blank" className="maps_link">
         <div className="rec_card">
           <div className="venue">
             <img
@@ -21,8 +34,9 @@ function Recs({ suggestions }) {
             />
             <div className="details">
               <h4 className="name">{suggestion.results[0].name}</h4>
-              <div className="stars">
-                Rating: {suggestion.results[0].rating}
+              <div className="rating">
+                Rating: {displayStars(suggestion.results[0].rating)} (
+                {suggestion.results[0].rating})
               </div>
               <div className="desc" data-fulltext={descriptions[id]}>
                 {descriptions[id]}

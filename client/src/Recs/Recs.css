@@ -12,8 +12,6 @@
   max-height: 100%;
 }
 
-
-
 .rec_card {
   position: relative;
   padding: 20px;
@@ -89,13 +87,15 @@
   text-decoration: underline;
 }
 
-.stars {
+.rating {
   grid-area: stars;
   font-size: 0.95rem;
   color: #555;
   text-align: right;
   white-space: nowrap;
 }
+
+
 
 .desc {
   grid-area: desc;
