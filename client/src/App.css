@@ -9,7 +9,7 @@
   grid-template-areas:
     "header header"
     "chat recs";
-  background-color: black;
+  background-color: #1a1a1a;
   color: whitesmoke;
 }
 
@@ -22,7 +22,8 @@ body {
 }
 
 header {
-  text-align: left;
+  text-align: center;
+  grid-area: header;
 }
 
 header h1 {

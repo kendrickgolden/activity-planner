@@ -55,7 +55,7 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
 
     //add GPT response to conversation hitsory
     const AIMessage = data.response.startsWith("QUESTION:")
-      ? { role: "assistant", content: data.response }
+      ? { role: "assistant", content: data.response.replace("QUESTION: ","") }
       : { role: "assistant", content: "Ok, here you go!" };
     const updatedConvoResponse = [...updatedConvo, AIMessage];
     setConvo(updatedConvoResponse);

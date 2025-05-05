@@ -2,6 +2,8 @@
   grid-area: chat;
   position: relative;
   padding: 10px;
+  border-radius: 5px;
+  background-color: white;
 }
 
 
@@ -13,15 +15,36 @@
   bottom: 10px;
   height: 100px;
   display: flex;
+  border-radius: 5px;
+  align-items: center;
 }
 
 #chat_input {
-  flex: 0 0 90%;
+  flex: 0 0 80%;
   font-family: "Roboto", sans-serif;
   font-size: 1.5rem;
   resize: none;
+  border-radius: 10px;
+  height: 100%;
+  background-color: rgb(245, 240, 235);
+  border-style: none;
 }
 
 #submit {
-  flex: 0 0 10%;
+  flex: 0 0 20%;
+  background-color: #28af33; 
+  color: white;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
+}
+
+#submit:hover {
+  background-color: #28af3346; /* Darker indigo on hover */
+  transform: scale(1.05);
 }
