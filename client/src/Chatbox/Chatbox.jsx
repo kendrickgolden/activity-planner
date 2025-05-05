@@ -18,22 +18,42 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
   //send query to Open AI for conversion and return places query results
   const processSearch = async (event) => {
     event.preventDefault();
+    const new_messages = [];
     //0 = user text, 1 = response text
-    setConvo((prevText) => [...prevText, [search, 0]]);
+    new_messages.push([search, 0]);
+
     setSearch("");
 
     const response = await fetch(
-      `http://localhost:5000/api/places?query=${search}`
+      `http://localhost:5000/api/generate_query?query=${search}`
     );
 
     const data = await response.json();
-
-    if (data) {
-      setSuggestions(Object.values(data));
-      setNumVenues(data.length);
-
-      // console.log(data);
+    console.log(data);
+    if (data[0].includes("QUESTION:")) {
+      new_messages.push([data[0], 1]);
+      console.log("question");
+    } else {
+      getSuggestions(data);
     }
+    setConvo((prevText) => [...prevText, ...new_messages]);
+    console.log("new msgs", new_messages);
+  };
+
+  //send queries to Google Place API
+  const getSuggestions = async (queries) => {
+    const queryString = encodeURIComponent(queries.join("|"));
+    console.log(queryString);
+    const response = await fetch(
+      `http://localhost:5000/api/get_venues?query=${queryString}`
+    );
+
+    const data = await response.json(); 
+    console.log(data);
+    
+    
+    setSuggestions(Object.values(data));
+    setNumVenues(data.length);
   };
 
   return (

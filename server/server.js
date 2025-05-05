@@ -18,34 +18,57 @@ app.get("/", (req, res) => {
 });
 
 //return list of venues
-app.get("/api/places", async (req, res) => {
-  const query = req.query.query;
+app.get("/api/get_venues", async (req, res) => {
+  const queries = req.query.query;
+  const newQueries = queries.split("|").map(q => q.trim());
+  console.log(newQueries)
+  const output = [];
 
   try {
-    //make call to OpenAi to rewrite user search
-    const openAIPrompt = `First, determine how many different venues the user is looking for. Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query: "${query}". If the user is looking for multiple different venues return each respective phrase serpated by the delimiter "|".`;
-    const openAIResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: openAIPrompt }],
-      max_tokens: 30,
-    });
-    const queries = openAIResponse.choices[0].message.content.trim().split("|");
-    console.log("New Query: " + queries);
-
-    const output = [];
     //send new query to Places API
-    for (const query of queries) {
+    for (const query of newQueries) {
       const placesURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
         query
       )}&key=${process.env.PLACES_API_KEY}`;
 
       const response = await fetch(placesURL);
       const data = await response.json();
-      output.push(data)
+      output.push(data);
     }
-    console.log("Output: ", output)
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Failed" });
+  }
+  console.log(output);
+  res.json(output);
+});
+
+//determine if there is enough information to create a proper query or ask for more info if necessary
+app.get("/api/generate_query", async (req, res) => {
+  const query = req.query.query;
+
+  try {
+    //make call to OpenAi to rewrite user search
+    const openAIPrompt = `You are an assistant that will reword user quieres for the Google Maps Places API
+    Step 1: Analyze what the user is looking for from : "${query}". 
+      First, determine the number of different venues the user is looking to attend.
+      Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query.
+      Make sure you understand what the user is looking for, and some key details, such as the type of food. Do not hesitate to ask questions.
+    Step 2: If the query is understood, return:
+       Rewritten query or queries seperated by the delimiter: "|". Make sure that every venue has its own query. Example Format: query1|query2|query3
+    Step 3: If the query is ambiguous or missing information, return:
+      QUESTION: [clarifying question here]
+    Don't return "step 1,2,3", only return clear or question and the respetive text`;
+
+    const openAIResponse = await openai.chat.completions.create({
+      model: "gpt-4-turbo",
+      messages: [{ role: "user", content: openAIPrompt }],
+      max_tokens: 100,
+    });
+    const output = openAIResponse.choices[0].message.content.trim().split("|");
+    console.log("Output: " + output);
+
     res.json(output);
-  // res.json(data)
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Failed" });
