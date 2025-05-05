@@ -19,3 +19,15 @@
   font-family: "Roboto", sans-serif;
   font-size: 1.5rem;
 }
+
+.message {
+  width: 100%;
+}
+
+.user {
+  text-align: left;
+}
+
+.ai {
+  text-align: right;
+}

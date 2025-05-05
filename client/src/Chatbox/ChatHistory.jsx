@@ -1,9 +1,9 @@
 import "./ChatHistory.css";
 function ChatHistory({ convo }) {
-  const message = convo.map((text, index) => {
+  const message = convo.map((message, index) => {
     return (
-      <div className="message" key={index}>
-        {text}
+      <div className={message[1]==0 ? "message user" : "message ai"} key={index}>
+        {message[0]}
       </div>
     );
   });

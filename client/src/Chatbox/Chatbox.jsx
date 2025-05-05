@@ -18,7 +18,8 @@ function Input({ suggestions, setSuggestions, setNumVenues }) {
   //send query to Open AI for conversion and return places query results
   const processSearch = async (event) => {
     event.preventDefault();
-    setConvo((prevText) => [...prevText, search]);
+    //0 = user text, 1 = response text
+    setConvo((prevText) => [...prevText, [search, 0]]);
     setSearch("");
 
     const response = await fetch(
