@@ -77,7 +77,7 @@ app.post("/api/generate_desc", async (req, res) => {
     //Extra descriptiors added to help GPT generate more usefull solutions.
     const openAIPrompt = `Use this data to generate a description of the venue "${JSON.stringify(
       query
-    )}. Try to keep the description to within 2 sentences. Don't include  the exact address, ratings, reviews, or price level. Aspects to focus on: unique features, general part of the city, type of vibe(relaxed, upscale, authentic). If necessary, search the web for this venure and generate description based on what is found. Try not to use generic terms that could be used to describe large quanitites of places."`;
+    )}. Try to keep the description to within 2 sentences, but be as specific as possible. Don't include the exact address, ratings, reviews, or price level. If giving location, be more specific than just the city name. Aspects to focus on: unique features, general part of the city, type of vibe(relaxed, upscale, authentic). If necessary, search the web for this venure and generate description based on what is found. Try not to use generic terms that could be used to describe large quanitites of places."`;
     const openAIResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: openAIPrompt }],

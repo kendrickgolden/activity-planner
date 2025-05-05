@@ -26,7 +26,7 @@ function Input({suggestions, setSuggestions, setNumVenues}) {
       setSuggestions(Object.values(data));
       setNumVenues(data.length)
       console.log(data);
-      console.log(data.length)
+    //  console.log(data.length)
     }
   };
 
