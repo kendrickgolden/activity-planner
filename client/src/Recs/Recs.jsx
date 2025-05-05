@@ -9,6 +9,7 @@ function Recs({ suggestions }) {
 
   const venueCards = suggestions.map((suggestion) => {
     const id = suggestion.results[0].place_id;
+    const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${id}`;
     return (
       <div key={id}>
         <div className="rec_card">
@@ -16,7 +17,7 @@ function Recs({ suggestions }) {
           <div className="venue">
             <img src={images[id]} alt="Venue" />
             <div className="details">
-              <h4 className="name">{suggestion.results[0].name}</h4>
+              <a className="name" href={mapsUrl} target="_blank">{suggestion.results[0].name}</a>
               <div className="stars">
                 Rating: {suggestion.results[0].rating}
               </div>

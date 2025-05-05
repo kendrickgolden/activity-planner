@@ -23,7 +23,7 @@ app.get("/api/places", async (req, res) => {
 
   try {
     //make call to OpenAi to rewrite user search
-    const openAIPrompt = `Reword this into a phrase that would retain relevant results as a Google Maps API textsearch query: "${query}". If the user is looking for multiple different venues return each respective phrase serpated by the delimiter "|". Be careful not to overestimate the number of different venues the user is looking for.`;
+    const openAIPrompt = `First, determine how many different venues the user is looking for. Then reword the query into the respective number of phrases that would return relevant results as a Google Maps API textsearch query: "${query}". If the user is looking for multiple different venues return each respective phrase serpated by the delimiter "|".`;
     const openAIResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: openAIPrompt }],
