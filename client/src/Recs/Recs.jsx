@@ -11,21 +11,26 @@ function Recs({ suggestions }) {
     const id = suggestion.results[0].place_id;
     const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${id}`;
     return (
-      <div key={id}>
+      <a key={id}  href={mapsUrl} target="_blank" className="maps_link">
         <div className="rec_card">
-          {/*} <h3 className="datetime">Date: --- Time:</h3>*/}
           <div className="venue">
-            <img src={images[id]} alt="Venue" />
+            <img
+              src={images[id]}
+              alt={`${suggestion.results[0].name} venue`}
+              onError={(e) => (e.target.style.display = "none")}
+            />
             <div className="details">
-              <a className="name" href={mapsUrl} target="_blank">{suggestion.results[0].name}</a>
+              <h4 className="name">{suggestion.results[0].name}</h4>
               <div className="stars">
                 Rating: {suggestion.results[0].rating}
               </div>
-              <div className="desc">{descriptions[id]}</div>
+              <div className="desc" data-fulltext={descriptions[id]}>
+                {descriptions[id]}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </a>
     );
   });
 
@@ -92,7 +97,7 @@ function Recs({ suggestions }) {
       {" "}
       {suggestions && suggestions.length > 0 ? (
         <div>
-          <h2>Recomendations:</h2>
+          <h2>Recommendations:</h2>
           {venueCards}
         </div>
       ) : (

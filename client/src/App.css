@@ -1,5 +1,5 @@
 #root {
-  height: 100vh;
+  height: calc(100vh - 25px); 
   width: 100vw;
   padding: 2rem;
   text-align: center;
@@ -9,8 +9,9 @@
   grid-template-areas:
     "header header"
     "chat recs";
-  background-color: #1a1a1a;
   color: whitesmoke;
+  padding-bottom: 25px;
+  overflow: hidden;
 }
 
 body {

@@ -3,19 +3,38 @@
   width: 100%;
   height: 100%;
   padding: 10px;
+  background-color: #f9f9f9;
+  margin-left: 20px;
+  border-radius: 10px;
+  color: black;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 100%;
 }
+
+
 
 .rec_card {
   position: relative;
-  padding: 10px;
+  padding: 20px;
   width: 100%;
-  border: 1px solid white;
-  height: 200px;
+  border: 3px solid black;
+  min-height: 200px;
   display: grid;
   grid-template-rows: 1fr 4fr;
   grid-template-areas:
     "datetime"
     "venue";
+  background-color: rgb(230, 223, 223);
+  border-radius: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.rec_card:hover {
+  transform: scale(1.02);
 }
 
 .datetime {
@@ -28,36 +47,85 @@
 .venue {
   position: relative;
   grid-area: venue;
+  display: flex;
   display: grid;
   grid-template-columns: 2fr 3fr;
   grid-template-areas: "image details";
+  gap: 10px;
 }
 
 .venue img {
   position: relative;
-  max-width: 200px;
-  max-height: 150px;
-  height: auto;
-  object-fit: contain;
+  width: 180px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
 .details {
   display: grid;
+  grid-template-rows: auto 1fr;
   grid-template-columns: 3fr 1fr;
-  grid-template-rows: 1fr 3fr;
   grid-template-areas:
     "name stars"
     "desc desc";
+  min-height: 150px;
+  gap: 4px 8px;
 }
 
 .name {
-    grid-area: name;
+  grid-area: name;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2b2b2b;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name:hover {
+  text-decoration: underline;
 }
 
 .stars {
-    grid-area: stars;
+  grid-area: stars;
+  font-size: 0.95rem;
+  color: #555;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .desc {
-    grid-area: desc;
+  grid-area: desc;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-height: 8.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.desc:hover {
+  content: attr(data-fulltext);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  color: #000;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  white-space: normal;
+  max-height: none;
+  overflow: visible;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }

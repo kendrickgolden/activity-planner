@@ -76,3 +76,12 @@ h4 {
 body {
   font-family: "Poppins", sans-serif;
 }
+
+html,body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding-bottom: 25px;
+  background-color: #1a1a1a;
+}
+
